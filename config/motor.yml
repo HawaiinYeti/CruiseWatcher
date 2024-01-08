@@ -1,0 +1,74 @@
+---
+engine_version: 0.4.23
+file_version: 2024-01-07 21:32:24.778615000 Z
+resources:
+- name: port
+  preferences:
+    associations:
+    - name: rooms
+      display_name: Rooms
+      model_name: room
+      foreign_key: sailing_id
+      primary_key: id
+      virtual: true
+      polymorphic: false
+      slug: rooms
+  updated_at: 2024-01-07 21:32:24.778615000 +00:00
+- name: port_cruise_membership
+  preferences:
+    visible: false
+  updated_at: 2024-01-07 21:16:42.787924000 +00:00
+- name: room
+  preferences:
+    columns:
+    - access_type: hidden
+      name: updated_at
+    - access_type: hidden
+      name: created_at
+    - access_type: hidden
+      name: id
+    - column_type: integer
+      access_type: hidden
+      reference:
+      validators: []
+      description: ''
+      name: sailing_id
+  updated_at: 2024-01-07 21:14:11.733097000 +00:00
+- name: room_feature_membership
+  preferences:
+    visible: false
+  updated_at: 2024-01-07 21:16:43.994249000 +00:00
+- name: room_pricing
+  preferences:
+    visible: false
+  updated_at: 2024-01-07 21:16:51.948336000 +00:00
+configs:
+- key: resources.order
+  value:
+  - port
+  - ship
+  - cruise
+  - sailing
+  - room
+  - room_feature
+  - port_cruise_membership
+  - room_feature_membership
+  - room_pricing
+  updated_at: 2024-01-07 21:17:14.599271000 +00:00
+- key: resources.room.columns.order
+  value:
+  - name
+  - price
+  - room_class
+  - sailing
+  - cruise
+  - sailing_id
+  - id
+  - updated_at
+  - created_at
+  updated_at: 2024-01-07 21:13:39.245395000 +00:00
+queries: []
+dashboards: []
+forms: []
+alerts: []
+api_configs: []
