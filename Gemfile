@@ -67,3 +67,8 @@ group :test do
 end
 
 gem "motor-admin", "~> 0.4.23"
+gem "graphlient", "~> 0.7.0"
+
+gem "httpx", "~> 1.2"
+
+gem "parallel", "~> 1.24"
