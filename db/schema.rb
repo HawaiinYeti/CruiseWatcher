@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_17_034235) do
+ActiveRecord::Schema[7.1].define(version: 2023_12_17_034236) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "cruises", force: :cascade do |t|
+    t.bigint "ship_id", null: false
+    t.string "cruise_code"
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ship_id"], name: "index_cruises_on_ship_id"
+  end
 
   create_table "motor_alert_locks", force: :cascade do |t|
     t.bigint "alert_id", null: false
@@ -207,9 +216,95 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_17_034235) do
     t.index ["name"], name: "motor_tags_name_unique_index", unique: true
   end
 
+  create_table "port_cruise_memberships", force: :cascade do |t|
+    t.bigint "port_id", null: false
+    t.bigint "cruise_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cruise_id"], name: "index_port_cruise_memberships_on_cruise_id"
+    t.index ["port_id"], name: "index_port_cruise_memberships_on_port_id"
+  end
+
+  create_table "ports", force: :cascade do |t|
+    t.string "name"
+    t.string "code"
+    t.string "region"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "room_feature_memberships", force: :cascade do |t|
+    t.bigint "room_id", null: false
+    t.bigint "room_feature_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["room_feature_id"], name: "index_room_feature_memberships_on_room_feature_id"
+    t.index ["room_id"], name: "index_room_feature_memberships_on_room_id"
+  end
+
+  create_table "room_features", force: :cascade do |t|
+    t.string "feature_name"
+    t.text "regex_matchers", default: "--- []\n", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "room_pricings", force: :cascade do |t|
+    t.datetime "timestamp"
+    t.bigint "room_id", null: false
+    t.bigint "sailing_id", null: false
+    t.decimal "price", default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["room_id"], name: "index_room_pricings_on_room_id"
+    t.index ["sailing_id"], name: "index_room_pricings_on_sailing_id"
+  end
+
+  create_table "rooms", force: :cascade do |t|
+    t.string "name"
+    t.string "room_class"
+    t.bigint "sailing_id", null: false
+    t.decimal "price", default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sailing_id"], name: "index_rooms_on_sailing_id"
+  end
+
+  create_table "sailings", force: :cascade do |t|
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.string "sailing_code"
+    t.boolean "active", default: true, null: false
+    t.bigint "ship_id", null: false
+    t.bigint "cruise_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cruise_id"], name: "index_sailings_on_cruise_id"
+    t.index ["ship_id"], name: "index_sailings_on_ship_id"
+  end
+
+  create_table "ships", force: :cascade do |t|
+    t.string "name"
+    t.string "ship_class"
+    t.string "ship_code"
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "cruises", "ships"
   add_foreign_key "motor_alert_locks", "motor_alerts", column: "alert_id"
   add_foreign_key "motor_alerts", "motor_queries", column: "query_id"
   add_foreign_key "motor_note_tag_tags", "motor_note_tags", column: "tag_id"
   add_foreign_key "motor_note_tag_tags", "motor_notes", column: "note_id"
   add_foreign_key "motor_taggable_tags", "motor_tags", column: "tag_id"
+  add_foreign_key "port_cruise_memberships", "cruises"
+  add_foreign_key "port_cruise_memberships", "ports"
+  add_foreign_key "room_feature_memberships", "room_features"
+  add_foreign_key "room_feature_memberships", "rooms"
+  add_foreign_key "room_pricings", "rooms"
+  add_foreign_key "room_pricings", "sailings"
+  add_foreign_key "rooms", "sailings"
+  add_foreign_key "sailings", "cruises"
+  add_foreign_key "sailings", "ships"
 end
