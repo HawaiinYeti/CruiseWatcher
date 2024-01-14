@@ -7,7 +7,9 @@ class Room < ApplicationRecord
   has_many :room_features, through: :room_feature_memberships
   has_many :room_pricings, dependent: :destroy
 
-  before_save :update_room_features
+  has_many :ports, through: :cruise
+
+  before_save :update_room_features, :set_price_change
   after_save :stamp_room_pricings
 
   def update_room_features
@@ -31,5 +33,14 @@ class Room < ApplicationRecord
     ).update(
       price: price
     )
+  end
+
+  def set_price_change
+    time_range = ..24.hours.ago.beginning_of_hour
+    old_price = room_pricings.where(timestamp: time_range).
+                  order(timestamp: :desc).first&.price ||
+                  price
+
+    self.price_change_24hr = (price - old_price).floor
   end
 end
