@@ -79,6 +79,4 @@ test:
 #
 production:
   <<: *default
-  database: cruise_planner2_0_production
-  username: cruise_planner2_0
-  password: <%= ENV["CRUISE_PLANNER2_0_DATABASE_PASSWORD"] %>
+  url: postgres://postgres:postgres@postgres:5432/cruise_planner2_0_production
