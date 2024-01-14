@@ -72,3 +72,7 @@ gem "graphlient", "~> 0.7.0"
 gem "httpx", "~> 1.2"
 
 gem "parallel", "~> 1.24"
+
+gem "good_job", "~> 3.22"
+
+gem "deface", "~> 1.9"
