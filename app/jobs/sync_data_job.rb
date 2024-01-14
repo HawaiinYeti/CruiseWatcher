@@ -43,7 +43,8 @@ class SyncDataJob < ApplicationJob
           cruise_id: cruise_obj.id,
           start_date: sailing[:startDate].in_time_zone,
           end_date: sailing[:endDate].in_time_zone,
-          active: true
+          active: true,
+          booking_link: "https://royalcaribbean.com#{sailing[:bookingLink]}",
         )
         sailing_obj
       end
