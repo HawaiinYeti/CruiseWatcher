@@ -76,3 +76,5 @@ gem "parallel", "~> 1.24"
 gem "good_job", "~> 3.22"
 
 gem "deface", "~> 1.9"
+
+gem "dotenv", "~> 2.8"

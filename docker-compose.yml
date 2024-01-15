@@ -3,7 +3,7 @@ services:
   postgres:
     image: postgres:15-alpine
     ports:
-      - "5432:5432"
+      - "${PGSQL_PORT:-5432}:5432"
     environment:
       - POSTGRES_PASSWORD=postgres
     volumes:
@@ -19,7 +19,7 @@ services:
     volumes:
       - .:/rails
     ports:
-      - "3030:3000"
+      - "${WEB_PORT:-3000}:3000"
     depends_on:
       postgres:
         condition: service_healthy

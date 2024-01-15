@@ -79,4 +79,4 @@ test:
 #
 production:
   <<: *default
-  url: postgres://postgres:postgres@postgres:5432/cruise_planner2_0_production
+  url: postgres://postgres:postgres@postgres:<%= ENV['PGSQL_PORT'] %>/cruise_planner2_0_production
