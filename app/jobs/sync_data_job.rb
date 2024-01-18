@@ -16,12 +16,13 @@ class SyncDataJob < ApplicationJob
         cruise_code: cruise[:masterSailing][:itinerary][:code]
       )
       cruise_obj.update(
-        name: cruise[:masterSailing][:itinerary][:name]
+        name: cruise[:masterSailing][:itinerary][:name],
+        nights: cruise[:masterSailing][:itinerary][:sailingNights]
       )
 
       ports = cruise[:masterSailing][:itinerary][:days].
               select { |x| x[:type] == 'PORT' }
-      port_objs = ports.map do |day|
+      ports.each do |day|
         port = Port.find_or_create_by(
           code: day[:ports].first[:port][:code]
         )
@@ -29,9 +30,8 @@ class SyncDataJob < ApplicationJob
           name: day[:ports].first[:port][:name],
           region: day[:ports].first[:port][:region],
         )
-        port
       end
-      cruise_obj.ports = port_objs.uniq
+      cruise_obj.create_port_memberships(ports)
 
       sailings = cruise[:sailings].map do |sailing|
         sailing_obj = Sailing.find_or_create_by(
