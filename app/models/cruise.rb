@@ -3,6 +3,8 @@ class Cruise < ApplicationRecord
   has_many :sailings, dependent: :destroy
   has_many :port_cruise_memberships, dependent: :destroy
   has_many :ports, through: :port_cruise_memberships
+  has_many :departure_ports, -> { where(port_cruise_memberships: { day: 1 }) },
+           through: :port_cruise_memberships, source: :port
 
   def create_port_memberships(ports)
     objects = ports.map do |port|

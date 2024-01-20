@@ -8,6 +8,7 @@ class Room < ApplicationRecord
   has_many :room_pricings, dependent: :destroy
 
   has_many :ports, through: :cruise
+  has_many :departure_ports, through: :cruise
 
   before_save :update_room_features, :set_price_change
   after_save :stamp_room_pricings
@@ -42,5 +43,11 @@ class Room < ApplicationRecord
                   price
 
     self.price_change_24hr = (price - old_price).floor
+  end
+
+  def price_at(time)
+    return nil unless time >= created_at
+
+    room_pricings.where(timestamp: ..time.beginning_of_hour).last&.price || price
   end
 end
