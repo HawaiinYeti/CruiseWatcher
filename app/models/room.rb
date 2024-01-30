@@ -10,7 +10,7 @@ class Room < ApplicationRecord
   has_many :ports, through: :cruise
   has_many :departure_ports, through: :cruise
 
-  before_save :update_room_features, :set_price_change
+  before_save :update_room_features, :set_price_change, :set_interval_to_lowest_price
   after_save :stamp_room_pricings
 
   def update_room_features
@@ -26,7 +26,7 @@ class Room < ApplicationRecord
   end
 
   def stamp_room_pricings
-    return unless saved_change_to_price?
+    return unless saved_change_to_price? || saved_change_to_created_at?
 
     room_pricings.find_or_create_by(
       timestamp: Time.zone.now.beginning_of_hour,
@@ -49,5 +49,14 @@ class Room < ApplicationRecord
     return nil unless time >= created_at
 
     room_pricings.where(timestamp: ..time.beginning_of_hour).last&.price || price
+  end
+
+  def set_interval_to_lowest_price
+    return unless will_save_change_to_price? || will_save_change_to_created_at?
+
+    if price <= room_pricings.order(price: :asc).first.price
+      time = Time.zone.now.beginning_of_hour
+      self.interval_to_lowest_price = (sailing.start_date - time).floor.seconds
+    end
   end
 end
