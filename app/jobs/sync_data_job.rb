@@ -68,7 +68,7 @@ class SyncDataJob < ApplicationJob
         end
       end.flatten
     end
-    Room.where.not(id: all_room_ids).update_all(available: false)
+    Room.where.not(id: room_ids).update_all(available: false)
 
     true
   end
