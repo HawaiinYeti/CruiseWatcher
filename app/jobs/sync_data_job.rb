@@ -5,6 +5,7 @@ class SyncDataJob < ApplicationJob
     client = RcClient.new
     cruises = client.get_sailings(Ship.where(active: true).pluck(:ship_code))
 
+    room_ids = []
     Parallel.each(cruises, in_threads: 2) do |cruise|
       cruise_client = RcClient.new
 
@@ -63,9 +64,11 @@ class SyncDataJob < ApplicationJob
           room_obj.update(
             price: room[:priceLockup][:totalPriceNbr]
           )
+          room_ids << room_obj.id
         end
-      end
+      end.flatten
     end
+    Room.where.not(id: all_room_ids).update_all(available: false)
 
     true
   end
